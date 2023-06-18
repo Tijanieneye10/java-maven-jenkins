@@ -17,7 +17,7 @@ pipeline {
             }
             steps {
                 echo "Here is my first build ${NEW_VERSION}"
-                echo "The branch am building is ${BRANCH_NAME}"
+                echo "The branch am building is ${params.APPNAME}"
             }
         }
 
