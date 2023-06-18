@@ -38,9 +38,17 @@ pipeline {
         }
 
         stage("test") {
+
+            input {
+                message "Select your environment"
+                ok "Done"
+                parameters {
+                    choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Select environment')
+                }
+            }
             
             steps {
-                echo "test running..."
+                echo "test running on ${ENVIRONMENT}"
                 echo "test passed..."
             }
         }
