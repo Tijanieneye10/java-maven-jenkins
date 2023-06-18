@@ -17,7 +17,7 @@ pipeline {
                 script{
                     echo "building the docker image..."
                     withCredentials([
-                        usernamePassword(credenttialsId: 'DockerHub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME' )
+                        usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME' )
                     ]){
                         sh 'docker build -t brainydeveloper/maven:1.2 .'
                         sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
