@@ -1,64 +1,40 @@
-def gv 
 pipeline {
     agent any
-    environment {
-        NEW_VERSION = "1.0.0"
+    tools {
+        maven 'maven3.9'
     }
-    parameters {
-        string(name: 'VERSION', defaultValue: 'latest', description: 'Software version')
-        choice(name: 'APPNAME', choices: ['laravel', 'amazon', 'azure'], description: 'Select software type')
-        booleanParam(name:  'executeTest', defaultValue: true, description: 'Do you want to run test')
-    }
+
     stages {
-        stage("from groovy script"){
-            steps{
+        stage("build jar") {
+            steps {
+                echo "building the application..."
+                sh "mvn package"
+            }
+        }
+
+        stage("build image"){
+            steps {
+                script{
+                    echo "building the docker image..."
+                    withCredentials([
+                        usernamePassword(credenttialsId: 'DockerHub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME' )
+                    ]){
+                        sh 'docker build -t brainydeveloper/maven:1.2 .'
+                        sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
+                        sh 'docker push brainydeveloper/maven:1.2'
+                    }   
+                }
+              
+            }
+        }
+
+        stage("deploy"){
+            steps {
                 script {
-                    gv = load "script.groovy"
+                 echo "Wow application deployed"
                 }
-            }
-        }
-        
-        stage("output from groovy script"){
-            steps {
-                script {
-                    gv.buildApp()
-                }
-            }
-        }
-        stage("build") {
-            when {
-                expression {
-                    params.executeTest
-                }
-            }
-            steps {
-                echo "Here is my first build ${NEW_VERSION}"
-                echo "The branch am building is ${params.APPNAME}"
-            }
-        }
-
-        stage("test") {
-
-            input {
-                message "Select your environment"
-                ok "Done"
-                parameters {
-                    choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Select environment')
-                }
-            }
-            
-            steps {
-                echo "test running on ${ENVIRONMENT}"
-                echo "test passed..."
-            }
-        }
-
-        stage("deploy") {
-            steps {
-                echo "deploying..."
-                echo "deployed"
+               
             }
         }
     }
-
 }
