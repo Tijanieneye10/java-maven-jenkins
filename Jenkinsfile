@@ -1,3 +1,4 @@
+def gv 
 pipeline {
     agent any
     environment {
@@ -9,6 +10,21 @@ pipeline {
         booleanParam(name:  'executeTest', defaultValue: true, description: 'Do you want to run test')
     }
     stages {
+        stage("from groovy script"){
+            steps{
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }
+        
+        stage("output from groovy script"){
+            steps {
+                script {
+                    gv.buildApp()
+                }
+            }
+        }
         stage("build") {
             when {
                 expression {
