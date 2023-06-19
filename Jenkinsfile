@@ -19,7 +19,7 @@ pipeline {
             }
         }
 
-        stage("build"){
+        stage("deploy"){
              when{
                 expression{
                     BRANCH_NAME == 'main'
