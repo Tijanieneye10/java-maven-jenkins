@@ -1,15 +1,13 @@
 pipeline {
-
     agent any
-    
     stages {
-        stage("test"){
+        stage("test") {
             steps {
                 echo "Running a test here..."
             }
         }
 
-        stage("build"){
+        stage("build") {
             when{
                 expression {
                     BRANCH_NAME == 'main'
@@ -23,7 +21,7 @@ pipeline {
 
         stage("build"){
              when{
-                expression{
+                expression {
                     BRANCH_NAME == 'main'
                 }
             }
